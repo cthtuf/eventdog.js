@@ -10,7 +10,7 @@ EventDog - это небольшой плагин, использующий jQuery, который отслеживает ajax з
 Для начала скрипт нужно подключить к документу
 
 ```
-&lt;script type="text/javascript" src="eventdog.js"&gt;&lt;/script&gt;
+<script type="text/javascript" src="eventdog.js"></script>
 ```
 
 Теперь при $(document).ready() можно вызывать eventdog.
@@ -54,6 +54,7 @@ eventdog.dom({
 
 [Посмотреть демо](http://eventdog.dev.cubeline.ru/)
 
+
 Содействие
 ----------
 
@@ -61,7 +62,7 @@ eventdog.dom({
 sirotkin@cubeline.ru
 http://www.cubeline.ru/contacts.html
 
-License & Policy
+Лицензия
 ---------------------------
 
 Copyright (c) 2015 Philipp Sirotkin <sirotkin@cubeline.ru> Cubeline agency <http://www.cubeline.ru/>.
