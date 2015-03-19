@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <div class="col-lg-12 jumbotron">
+        <h1>EventDog.js</h1>
+
+        <p>EventDog - это небольшой плагин, использующий jQuery, который отслеживает ajax запросы, а так же изменения в структуре и
+            содержимом элементов и вызывает нужную вам функцию.</p>
+
+        <h2>Использование</h2>
+
+        <div class="col-lg-6">
+            <h3 class="text-center">eventdog.ajax:</h3>
+
+        <pre>
+
+            eventdog.ajax({
+                element: '#form_test',
+                substring: $('#string_check_2').val(),
+                events: 'success error',
+                url: 'test/test.php',
+                callback: function () {
+                    alert('Всё получилось!')
+                }
+            });
+        </pre>
+            <dl class="dl-horizontal">
+                <dt>callback</dt>
+                <dd>функция, которая вызывается при событиях отправки или получения ajax запросов.</dd>
+                <dt>substring</dt>
+                <dd>строка, которую нужно искать в ответе запроса.</dd>
+                <dt>events</dt>
+                <dd>события, пишутся через пробел. Могут быть:
+                    <span class="label label-primary">send</span>
+                    <span class="label label-success">success</span>
+                    <span class="label label-danger">error</span>
+                    <span class="label label-default">complete</span>
+                </dd>
+                <dt>element</dt>
+                <dd>селектор формы, которую нужно проверять (только если в ей указан атрибут <b>action</b>).</dd>
+                <dt>url</dt>
+                <dd>адрес, по которому нужно отслеживать запросы.</dd>
+            </dl>
+        </div>
+        <div class="col-lg-6">
+            <h3 class="text-center">eventdog.dom:</h3>
+        <pre>
+
+            eventdog.dom({
+                element: '#test_p',
+                substring: $('#string_check_4').val(),
+                callback: function () {
+                    alert('Всё получилось!');
+                }
+            });
+        </pre>
+            <dl class="dl-horizontal">
+                <dt>callback</dt>
+                <dd>функция, которая вызывается при изменении элемента.</dd>
+                <dt>substring</dt>
+                <dd>строка, которую нужно в изменённом элемента.</dd>
+                <dt>element</dt>
+                <dd>селектор элемента, который нужно проверять.</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="col-lg-12"><h2>Примеры:</h2></div>
+        <div class="col-lg-6">
+            <form action="server.php" method="get" id="form_test">
+                <h3>Проверка ajax</h3>
+
+                <div class="form-group">
+                    <label for="string_check_1">Строка, котора должна вернуться</label>
+                    <input type="text" class="form-control" id="string_check_1" name='string-check'
+                           placeholder="Введите текст">
+                </div>
+                <div class="form-group">
+                    <label for="string_check_2">Строка, которую нужно проверить</label>
+                    <input type="text" class="form-control" id="string_check_2" placeholder="Введите текст" disabled
+                           value="Ура!">
+                </div>
+                <button type="submit" class="btn btn-primary">Отправить</button>
+            </form>
+            <div class="form-group">
+                <h4>Ответ с сервера:</h4>
+
+                <p id="test_ajax"></p>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <h3>Проверка dom</h3>
+
+            <form id="form_test_2">
+                <div class="form-group">
+                    <label for="string_check_1">Строка, которую нужно вставить</label>
+                    <input type="text" class="form-control" id="string_check_3" name='string-check'
+                           placeholder="Введите текст">
+                </div>
+                <div class="form-group">
+                    <label for="string_check_2">Строка, которую нужно найти</label>
+                    <input type="text" class="form-control" id="string_check_4" placeholder="Введите текст" disabled
+                           value="Булочки!">
+                </div>
+                <button type="submit" class="btn btn-primary">Добавить</button>
+            </form>
+
+            <div class="form-group">
+                <p id="test_p">
+                    <br>Самым известным «рыбным» текстом является знаменитый Lorem ipsum. Считается, что впервые его
+                    применили в книгопечатании еще в XVI веке. Своим появлением Lorem ipsum обязан древнеримскому философу
+                    Цицерону, ведь именно из его трактата «О пределах добра и зла» средневековый книгопечатник вырвал
+                    отдельные фразы и слова, получив текст-«рыбу», широко используемый и по сей день. Конечно, возникают
+                    некоторые вопросы, связанные с использованием Lorem ipsum на сайтах и проектах, ориентированных на
+                    кириллический контент – написание символов на латыни и на кириллице значительно различается.</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+<script src="eventdog.js"></script>
+<script>
+
+    eventdog.ajax({
+        element: '#form_test',
+        events: 'success',
+        substring: $('#string_check_2').val(),
+        callback: function () {
+            alert('Всё получилось!')
+        }
+    });
+
+    eventdog.dom({
+        element: '#test_p',
+        substring: $('#string_check_4').val(),
+        callback: function () {
+            alert('Всё получилось!');
+        }
+    });
+
+    $('#form_test').on('submit', function (e) {
+        var $this = $(this);
+        e.preventDefault();
+        $.post($this.attr('action'), $this.serialize())
+                .done(function (data) {
+                    data = JSON.stringify($.parseJSON(data));
+                    $('#test_ajax').text(data);
+                });
+    });
+
+    $('#form_test_2').on('submit', function (e) {
+        e.preventDefault();
+        $('#test_p').html($('#test_p').html() + $('#string_check_3').val());
+    })
+</script>
+
+</html>
