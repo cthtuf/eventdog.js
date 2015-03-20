@@ -7,12 +7,6 @@
 
 eventdog = (function () {
     /**
-     * Делает строку с заглавной буквой
-     */
-    String.prototype.capitalize = function () {
-        return this.charAt(0).toUpperCase() + this.slice(1);
-    };
-    /**
      * Переводит строку из юникода в символы
      */
     String.prototype.unicodeToChar = function () {
@@ -35,8 +29,8 @@ eventdog = (function () {
     };
     return {
         /**
-         * Фунеция для проверки содержимого при ajax запросах и выхове нужной ф-ции
-         * @param options.callback (function) - функция, которая вызывается при разных событиях
+         * Функция для проверки содержимого ajax запросов и вызова пользовательской ф-ции.
+         * @param options.callback (function) - функция, которая вызывается при ajax запросах событиях
          * @param options.events (string) - события, пишутся через пробел, могут быть (send, success, error, complete)
          * @param options.element (string) - селектор формы, которую нужно отслеживать
          * @param options.url (string) - url, по которому нужно отслеживать запросы
@@ -46,7 +40,7 @@ eventdog = (function () {
             options = typeof options !== 'undefined' ? options : {};
             options.callback = typeof options.callback !== 'undefined' ? options.callback : -1;
 
-            // Проверяем, если указаг параметр events и преобразуем нужные нам события
+            // Проверяем, указан ли параметр events
             if (typeof options.events !== 'undefined') {
                 options.events = options.events.toLowerCase().split(' ');
                 for (var i = 0; i < options.events.length; ++i) {
@@ -109,10 +103,10 @@ eventdog = (function () {
             }
         },
         /**
-         * Фунеция для проверки содержимого блока при его изменении
+         * Функция для проверки содержимого блока при его изменении
          * @param options.callback (function) - функция, которая вызывается при изменении блока
          * @param options.element (string) - селектор блока, который нужно проверять
-         * @param options.substring (string) - строка, которую нужно в изменённом блоке
+         * @param options.substring (string) - строка, для поиска в изменённом блоке
          */
         dom: function (options) {
             options = typeof options !== 'undefined' ? options : {};
