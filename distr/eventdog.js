@@ -1,27 +1,27 @@
 /**
- * EventDog v1.1
+ * EventDog v1.2
  * (c) 2015 Cubeline agency. http://www.cubeline.ru/
  * author: Philipp Sirotkin. sirotkin@cubeline.ru
  * License: MIT
  */
 
-var origOn = $.fn.on;
-var origEvent = EventTarget.prototype.addEventListener; // store original
-/**
- * Добавление пользователького события addEvent при добавлении других событий jQuery
- */
-$.fn.on = function () {
-    return origOn.apply(this, arguments).trigger("addEvent");
-};
-/**
- * Добавление пользователького события addEvent при добавлении других событий javascript
- */
-EventTarget.prototype.addEventListener = function(type, fn, capture) {
-    this.origEvent = origEvent;
-    this.origEvent(type, fn, capture); // call original method
-    $(this).trigger('addEvent');
-}
 eventdog = (function () {
+    var origOn = $.fn.on;
+    var origEvent = EventTarget.prototype.addEventListener; // store original
+    /**
+     * Добавление пользователького события addEvent при добавлении других событий jQuery
+     */
+    $.fn.on = function () {
+        return origOn.apply(this, arguments).trigger("addEvent");
+    };
+    /**
+     * Добавление пользователького события addEvent при добавлении других событий javascript
+     */
+    EventTarget.prototype.addEventListener = function (type, fn, capture) {
+        this.origEvent = origEvent;
+        this.origEvent(type, fn, capture); // call original method
+        $(this).trigger('addEvent');
+    };
     /**
      * Переводит строку из юникода в символы
      */
@@ -34,7 +34,7 @@ eventdog = (function () {
     /**
      * Ф-ция для перевода первой буквы в верхний регистр
      */
-    String.prototype.capitalize = function() {
+    String.prototype.capitalize = function () {
         return this.charAt(0).toUpperCase() + this.slice(1);
     };
     /**
@@ -55,7 +55,7 @@ eventdog = (function () {
      * @param eventData (Object) - передаваемы атрибуты
      * @param handler (Function) - обработчик
      */
-    $.fn.bindFirst = function( eventType, eventData, handler) {
+    $.fn.bindFirst = function (eventType, eventData, handler) {
         var indexOfDot = eventType.indexOf(".");
         var eventNameSpace = indexOfDot > 0 ? eventType.substring(indexOfDot) : "";
 
@@ -63,12 +63,12 @@ eventdog = (function () {
         handler = handler == undefined ? eventData : handler;
         eventData = typeof eventData == "function" ? {} : eventData;
 
-        return this.each(function() {
+        return this.each(function () {
             var $this = $(this);
             var currentAttrListener = this["on" + eventType];
 
             if (currentAttrListener) {
-                $this.bind(eventType, function(e) {
+                $this.bind(eventType, function (e) {
                     return currentAttrListener(e.originalEvent);
                 });
 
@@ -83,8 +83,8 @@ eventdog = (function () {
             typeEvents.unshift(newEvent);
         });
     };
-    $.fn.bindLast = function(event, cbFunc){
-        return this.each(function(){
+    $.fn.bindLast = function (event, cbFunc) {
+        return this.each(function () {
 
             var highIndex = 1000000;
             var eventData = event.split('.');
@@ -93,26 +93,25 @@ eventdog = (function () {
             $(this).on(event, cbFunc);
 
             var elem = this;
-            $(this).on('addEvent', function(e){
-                var events = $._data( elem, "events" ),
+            $(this).on('addEvent', function (e) {
+                var events = $._data(elem, "events"),
                     ourIndex = false,
                     usedIndicies = {};
-                $.each(events[eventName], function(index, func){
-                    if(func.handler === cbFunc){
+                $.each(events[eventName], function (index, func) {
+                    if (func.handler === cbFunc) {
                         ourIndex = index;
                     }
                     usedIndicies[index] = 1;
                 });
-
-                console.log(usedIndicies);
-                if(ourIndex !== false){
-                    while(usedIndicies[highIndex] == 1){
+                if (ourIndex !== false) {
+                    while (usedIndicies[highIndex] == 1) {
                         highIndex++;
                     }
-                    console.log( events[eventName][ourIndex] );
-                    events[eventName][highIndex] = events[eventName][ourIndex];
-                    delete events[eventName][ourIndex];
-                    console.log( events[eventName] );
+
+                    var pos = events[eventName].length - 1,
+                        item = events[eventName][ourIndex];
+                    events[eventName].splice(ourIndex, 1);
+                    events[eventName].splice(pos, 0, item);
 
                     $(elem).data('events', events);
                 }
@@ -145,9 +144,9 @@ eventdog = (function () {
             }
 
             // Берём значение action из блока, если нет options.url
-            if(typeof options.element !== 'undefined' && typeof options.url == 'undefined'){
+            if (typeof options.element !== 'undefined' && typeof options.url == 'undefined') {
                 options.element = $(options.element);
-                if(options.element.attr('action').length){
+                if (options.element.attr('action').length) {
                     options.url = options.element.attr('action');
                 }
             }
@@ -157,15 +156,15 @@ eventdog = (function () {
                 $(document).on(options.events, function (event, xhr, settings, data) {
                     if (settings.url.indexOf(options.url) !== -1) {
                         if (typeof options.substring !== 'undefined') {
-                            if(typeof data == 'undefined') return;
-                            if(data.clearText().indexOf(options.substring.clearText()) !== -1){
+                            if (typeof data == 'undefined') return;
+                            if (data.clearText().indexOf(options.substring.clearText()) !== -1) {
                                 try {
                                     options.callback();
                                 } catch (e) {
                                     throwError();
                                 }
                             }
-                        }else{
+                        } else {
                             try {
                                 options.callback();
                             } catch (e) {
@@ -177,15 +176,15 @@ eventdog = (function () {
             } else {
                 $(document).on(options.events, function (event, xhr, settings, data) {
                     if (typeof options.substring !== 'undefined') {
-                        if(typeof data == 'undefined') return;
-                        if(data.clearText().indexOf(options.substring.clearText()) !== -1){
+                        if (typeof data == 'undefined') return;
+                        if (data.clearText().indexOf(options.substring.clearText()) !== -1) {
                             try {
                                 options.callback();
                             } catch (e) {
                                 throwError();
                             }
                         }
-                    }else{
+                    } else {
                         try {
                             options.callback();
                         } catch (e) {
@@ -218,9 +217,9 @@ eventdog = (function () {
             } else {
                 $element.on('DOMSubtreeModified change', function () {
                     var text = null;
-                    if($element[0].tagName == 'INPUT' || $element[0].tagName == 'TEXTAREA'){
+                    if ($element[0].tagName == 'INPUT' || $element[0].tagName == 'TEXTAREA' || $element[0].tagName == 'SELECT') {
                         text = $element.val();
-                    }else{
+                    } else {
                         text = $element.text();
                     }
                     if (text.clearText().indexOf(options.substring.clearText()) !== -1) {
@@ -238,27 +237,39 @@ eventdog = (function () {
          * @param options.callback (function) - функция, которая вызывается
          * @param options.element (string) - селектор элемента
          */
-        click: function(options){
-            var $element = $(options.element);
-            $element.bindFirst('click', options.callback);
+        click: function (options) {
+            try {
+                var $element = $(options.element);
+                $element.bindFirst('click', options.callback);
+            } catch (e) {
+                throwError();
+            }
         },
         /**
          * Функция для вызова callback ф-ции первой при событии submit
          * @param options.callback (function) - функция, которая вызывается
          * @param options.element (string) - селектор элемента
          */
-        submit: function(options){
-            var $element = $(options.element);
-            $element.bindFirst('submit', options.callback);
+        submit: function (options) {
+            try {
+                var $element = $(options.element);
+                $element.bindFirst('submit', options.callback);
+            } catch (e) {
+                throwError();
+            }
         },
         /**
          * Функция для вызова callback ф-ции последней при событии change
          * @param options.callback (function) - функция, которая вызывается
          * @param options.element (string) - селектор элемента
          */
-        change: function(options){
-            var $element = $(options.element);
-            $element.bindLast('change', options.callback);
+        change: function (options) {
+            try {
+                var $element = $(options.element);
+                $element.bindLast('change', options.callback);
+            } catch (e) {
+                throwError();
+            }
         }
     }
 })();
