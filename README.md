@@ -16,7 +16,7 @@ EventDog - это небольшой плагин, использующий jQue
 
 Теперь при _$(document).ready()_ можно вызывать eventdog.
 
-У _eventdog.js_ есть два метода:
+У _eventdog.js_ есть четыре метода:
 
 **eventdog.ajax()** - отслеживание ajax запросов, имеет следующие опции:
 
@@ -40,12 +40,12 @@ EventDog - это небольшой плагин, использующий jQue
 Пример:
 ```javascript
 eventdog.ajax({
-	element: '#form_test',
+	element: '#selector',
 	substring: 'нужная строчка',
 	events: 'send success error complete',
 	url: 'test/test.php',
 	callback: function () {
-		alert('Всё получилось!')
+		...
 	}
 });
 ```
@@ -64,10 +64,46 @@ eventdog.ajax({
 Пример:
 ```javascript
 eventdog.dom({
-	element: '#test_p',
+	element: '#selector',
 	substring: 'нужная строчка',
 	callback: function () {
-		alert('Всё получилось!');
+		...
+	}
+});
+```
+**eventdog.click()** - отслеживание события submit у формы и вызов callback ф-ции первой, среди других обработчиков:
+
+* callback - функция, которая вызывается при изменении элемента.
+
+        требуется обязательно
+* element - селектор элемента, который нужно проверять.
+
+        требуется обязательно
+
+Пример:
+```javascript
+eventdog.click({
+	element: '#selector, .selector',
+	callback: function () {
+		...
+	}
+});
+```
+**eventdog.submit()** - отслеживание события submit у формы и вызов callback ф-ции первой, среди других обработчиков:
+
+* callback - функция, которая вызывается при изменении элемента.
+
+        требуется обязательно
+* element - селектор элемента, который нужно проверять.
+
+        требуется обязательно
+
+Пример:
+```javascript
+eventdog.submit({
+	element: '#selector',
+	callback: function () {
+		...
 	}
 });
 ```

@@ -1,10 +1,26 @@
 /**
- * EventDog v1.0
+ * EventDog v1.1
  * (c) 2015 Cubeline agency. http://www.cubeline.ru/
  * author: Philipp Sirotkin. sirotkin@cubeline.ru
  * License: MIT
  */
 
+var origOn = $.fn.on;
+var origEvent = EventTarget.prototype.addEventListener; // store original
+/**
+ * Добавление пользователького события addEvent при добавлении других событий jQuery
+ */
+$.fn.on = function () {
+    return origOn.apply(this, arguments).trigger("addEvent");
+};
+/**
+ * Добавление пользователького события addEvent при добавлении других событий javascript
+ */
+EventTarget.prototype.addEventListener = function(type, fn, capture) {
+    this.origEvent = origEvent;
+    this.origEvent(type, fn, capture); // call original method
+    $(this).trigger('addEvent');
+}
 eventdog = (function () {
     /**
      * Переводит строку из юникода в символы
@@ -14,6 +30,12 @@ eventdog = (function () {
             function (match) {
                 return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
             });
+    };
+    /**
+     * Ф-ция для перевода первой буквы в верхний регистр
+     */
+    String.prototype.capitalize = function() {
+        return this.charAt(0).toUpperCase() + this.slice(1);
     };
     /**
      * Очищает строку от всех символов, кроме a-z, а-я, 0-9, -, !, ?
@@ -27,6 +49,77 @@ eventdog = (function () {
     var throwError = function () {
         console.error('Нужно указать функцию через параметр callback для её последующего вызова вызова');
     };
+    /**
+     * Ф-ция для вызова первым обработчика события среди других
+     * @param eventType (String) - тип события
+     * @param eventData (Object) - передаваемы атрибуты
+     * @param handler (Function) - обработчик
+     */
+    $.fn.bindFirst = function( eventType, eventData, handler) {
+        var indexOfDot = eventType.indexOf(".");
+        var eventNameSpace = indexOfDot > 0 ? eventType.substring(indexOfDot) : "";
+
+        eventType = indexOfDot > 0 ? eventType.substring(0, indexOfDot) : eventType;
+        handler = handler == undefined ? eventData : handler;
+        eventData = typeof eventData == "function" ? {} : eventData;
+
+        return this.each(function() {
+            var $this = $(this);
+            var currentAttrListener = this["on" + eventType];
+
+            if (currentAttrListener) {
+                $this.bind(eventType, function(e) {
+                    return currentAttrListener(e.originalEvent);
+                });
+
+                this["on" + eventType] = null;
+            }
+
+            $this.bind(eventType + eventNameSpace, eventData, handler);
+
+            var allEvents = $this.data("events") || $._data($this[0], "events");
+            var typeEvents = allEvents[eventType];
+            var newEvent = typeEvents.pop();
+            typeEvents.unshift(newEvent);
+        });
+    };
+    $.fn.bindLast = function(event, cbFunc){
+        return this.each(function(){
+
+            var highIndex = 1000000;
+            var eventData = event.split('.');
+            var eventName = eventData[0];
+
+            $(this).on(event, cbFunc);
+
+            var elem = this;
+            $(this).on('addEvent', function(e){
+                var events = $._data( elem, "events" ),
+                    ourIndex = false,
+                    usedIndicies = {};
+                $.each(events[eventName], function(index, func){
+                    if(func.handler === cbFunc){
+                        ourIndex = index;
+                    }
+                    usedIndicies[index] = 1;
+                });
+
+                console.log(usedIndicies);
+                if(ourIndex !== false){
+                    while(usedIndicies[highIndex] == 1){
+                        highIndex++;
+                    }
+                    console.log( events[eventName][ourIndex] );
+                    events[eventName][highIndex] = events[eventName][ourIndex];
+                    delete events[eventName][ourIndex];
+                    console.log( events[eventName] );
+
+                    $(elem).data('events', events);
+                }
+            })
+        });
+    }
+
     return {
         /**
          * Функция для проверки содержимого ajax запросов и вызова пользовательской ф-ции.
@@ -139,6 +232,33 @@ eventdog = (function () {
                     }
                 });
             }
+        },
+        /**
+         * Функция для вызова callback ф-ции первой при событии click
+         * @param options.callback (function) - функция, которая вызывается
+         * @param options.element (string) - селектор элемента
+         */
+        click: function(options){
+            var $element = $(options.element);
+            $element.bindFirst('click', options.callback);
+        },
+        /**
+         * Функция для вызова callback ф-ции первой при событии submit
+         * @param options.callback (function) - функция, которая вызывается
+         * @param options.element (string) - селектор элемента
+         */
+        submit: function(options){
+            var $element = $(options.element);
+            $element.bindFirst('submit', options.callback);
+        },
+        /**
+         * Функция для вызова callback ф-ции последней при событии change
+         * @param options.callback (function) - функция, которая вызывается
+         * @param options.element (string) - селектор элемента
+         */
+        change: function(options){
+            var $element = $(options.element);
+            $element.bindLast('change', options.callback);
         }
     }
 })();

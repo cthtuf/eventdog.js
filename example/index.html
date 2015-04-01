@@ -4,19 +4,42 @@
     <meta charset="UTF-8">
     <title></title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <style>
+        body {
+            min-width: 420px;
+            padding: 20px 0;
+        }
+
+        .eventdog-img {
+            margin-right: 30px;
+        }
+
+        .no-padding {
+            padding: 0 !important;
+        }
+
+        .padding-top {
+            padding-top: 50px;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <div class="col-lg-12 jumbotron">
-        <h1>EventDog.js</h1>
+        <img src="eventdog.png" height="200" width="200" class="pull-left eventdog-img" title="Eventdog" alt="Eventdog">
 
-        <p>EventDog - это небольшой плагин, использующий jQuery, который отслеживает ajax запросы, а так же изменения в структуре и
-            содержимом элементов и вызывает нужную вам функцию.</p>
+        <h1>EventDog.js </h1>
 
-        <h2>Использование</h2>
+        <p>EventDog - это небольшой плагин, использующий jQuery, который отслеживает ajax запросы, submit форм, клики на
+            элементы, а так же изменения в
+            структуре и содержимом блоков и вызывает нужную вам функцию (callback).</p>
 
-        <div class="col-lg-6">
-            <h3 class="text-center">eventdog.ajax:</h3>
+    </div>
+
+    <h2 class="text-center padding-top">Использование</h2>
+
+    <div class="col-lg-6">
+        <h3 class="text-center">eventdog.ajax:</h3>
 
         <pre>
 
@@ -30,24 +53,48 @@
                 }
             });
         </pre>
-            <dl class="dl-horizontal">
-                <dt>callback</dt>
-                <dd>функция, которая вызывается при событиях отправки или получения ajax запросов.</dd>
-                <dt>substring</dt>
-                <dd>строка, которую нужно искать в ответе запроса.</dd>
-                <dt>events</dt>
-                <dd>события, пишутся через пробел. Могут быть:
-                    <span class="label label-primary">send</span>
-                    <span class="label label-success">success</span>
-                    <span class="label label-danger">error</span>
-                    <span class="label label-default">complete</span>
-                </dd>
-                <dt>element</dt>
-                <dd>селектор формы, которую нужно проверять (только если у неё указан атрибут <b>action</b>).</dd>
-                <dt>url</dt>
-                <dd>адрес, по которому нужно отслеживать запросы.</dd>
-            </dl>
-        </div>
+        <dl class="dl-horizontal">
+            <dt>callback</dt>
+            <dd>функция, которая вызывается при событиях отправки или получения ajax запросов.</dd>
+            <dt>substring</dt>
+            <dd>строка, которую нужно искать в ответе запроса.</dd>
+            <dt>events</dt>
+            <dd>события, пишутся через пробел. Могут быть:
+                <span class="label label-primary">send</span>
+                <span class="label label-success">success</span>
+                <span class="label label-danger">error</span>
+                <span class="label label-default">complete</span>
+            </dd>
+            <dt>element</dt>
+            <dd>селектор формы, которую нужно проверять (только если у неё указан атрибут <b>action</b>).</dd>
+            <dt>url</dt>
+            <dd>адрес, по которому нужно отслеживать запросы.</dd>
+        </dl>
+    </div>
+
+    <div class="col-lg-6">
+        <h3 class="text-center">eventdog.submit:</h3>
+                <pre>
+
+            eventdog.submit({
+                element: '#form_test',
+                callback: function () {
+                    alert('Всё получилось!')
+                }
+            });
+                </pre>
+        <dl class="dl-horizontal">
+            <dt>callback</dt>
+            <dd>функция, которая вызывается при отправке формы, при этом она ставится самая первая среди всех
+                обработчиков.
+            </dd>
+            <dt>element</dt>
+            <dd>селектор формы, на который нужно повесить обработчик
+            <dd>
+        </dl>
+    </div>
+
+    <div class="col-lg-12">
         <div class="col-lg-6">
             <h3 class="text-center">eventdog.dom:</h3>
         <pre>
@@ -69,9 +116,33 @@
                 <dd>селектор элемента, который нужно проверять.</dd>
             </dl>
         </div>
+        <div class="col-lg-6 clear">
+            <h3 class="text-center">eventdog.click:</h3>
+        <pre>
+
+            eventdog.click({
+                element: '#btn_click_test, #a_click_test',
+                callback: function () {
+                    alert('Всё получилось!')
+                }
+            });
+        </pre>
+            <dl class="dl-horizontal">
+                <dt>callback</dt>
+                <dd>функция, которая вызывается при клике на элемент, при этом она ставится самая первая среди всех
+                    обработчиков.
+                </dd>
+                <dt>element</dt>
+                <dd>селектор элемента, на который нужно повесить обработчик
+                <dd>
+            </dl>
+        </div>
+
     </div>
-    <div class="col-lg-12">
-        <div class="col-lg-12"><h2>Примеры:</h2></div>
+
+    <div class="col-lg-12 padding-top">
+        <h2 class="text-center">Примеры</h2>
+
         <div class="col-lg-6">
             <form action="server.php" method="get" id="form_test">
                 <h3>Проверка ajax</h3>
@@ -114,11 +185,37 @@
             <div class="form-group">
                 <p id="test_p">
                     <br>Самым известным «рыбным» текстом является знаменитый Lorem ipsum. Считается, что впервые его
-                    применили в книгопечатании еще в XVI веке. Своим появлением Lorem ipsum обязан древнеримскому философу
+                    применили в книгопечатании еще в XVI веке. Своим появлением Lorem ipsum обязан древнеримскому
+                    философу
                     Цицерону, ведь именно из его трактата «О пределах добра и зла» средневековый книгопечатник вырвал
                     отдельные фразы и слова, получив текст-«рыбу», широко используемый и по сей день. Конечно, возникают
                     некоторые вопросы, связанные с использованием Lorem ipsum на сайтах и проектах, ориентированных на
                     кириллический контент – написание символов на латыни и на кириллице значительно различается.</p>
+            </div>
+        </div>
+
+        <div class="col-lg-12 no-padding">
+            <form id="test_submit_form" class="col-md-6 ">
+                <h3>Проверка submit</h3>
+                <p id="test_p_2">
+                    При клике кнопку происходит submit формы, при этом текстовое поле должно менять значение disabled.<br>
+                    Но так как мы используем <strong>eventdog.submit</strong>, то сначала сработает его функция callback, а уже после все остальные события.</p>
+                <div class="form-group">
+                    <label for="string_check_2">Строка, которую нужно найти</label>
+                    <input type="text" class="form-control" id="string_check_5" placeholder="Введите текст" value="Тут может быть любой текст">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit form</button>
+            </form>
+            <div class="col-md-6 ">
+                <h3>Проверка click</h3>
+
+                <div class="form-group">
+                    <p id="test_p_3">
+                        При клике кнопку, должен измениться её цвет, а при клике по ссылке мы должны перейти на другую страницу.<br>
+                        Но так как мы используем <strong>eventdog.click</strong>, то сначала сработает его функция callback, а уже после все остальные события.</p>
+                </div>
+                <a href="http://git.cubeline.ru/cubeline/eventdog" id="a_click_test">Перейти на другую страницу</a><br><br>
+                <button type="submit" id="btn_click_test" class="btn btn-primary">Кликни на меня</button>
             </div>
         </div>
     </div>
@@ -128,12 +225,64 @@
 <script src="eventdog.min.js"></script>
 <script>
 
+    // AJAX group
+    $('#form_test').on('submit', function (e) {
+        var $this = $(this);
+        e.preventDefault();
+        $.post($this.attr('action'), $this.serialize())
+            .done(function (data) {
+                data = JSON.stringify($.parseJSON(data));
+                $('#test_ajax').text(data);
+            });
+    });
+
+    // DOM group
+    $('#form_test_2').on('submit', function (e) {
+        e.preventDefault();
+        $('#test_p').html($('#test_p').html() + $('#string_check_3').val());
+    });
+    // Submit group
+    $('#test_submit_form').on('submit', function(e){
+        e.preventDefault();
+        var $input = $('#string_check_5');
+        console.log($input.attr('disabled'));
+        if($input.attr('disabled')){
+            $input.attr('disabled', false);
+        }else{
+            $input.attr('disabled', true);
+        }
+        alert('Обработчик формы: я должен был быть первым :(');
+    });
+    // Click group
+    $('#btn_click_test').on('click', function () {
+        $(this).toggleClass('btn-danger');
+        alert('Обработчик кнопки: я должен был быть первым :(');
+    });
+    $('#a_click_test').on('click', function () {
+        alert('Обработчик ссылки: я должен был быть первым :(');
+    });
+
+
+    eventdog.click({
+        element: '#btn_click_test, #a_click_test',
+        callback: function () {
+            alert('Eventdog: я сработал первый!');
+        }
+    });
+
+    eventdog.submit({
+        element: '#test_submit_form',
+        callback: function () {
+            alert('Eventdog: я сработал первый!');
+        }
+    });
+
     eventdog.ajax({
         element: '#form_test',
         events: 'success',
         substring: $('#string_check_2').val(),
         callback: function () {
-            alert('Всё получилось!')
+            alert('Eventdog: всё получилось!')
         }
     });
 
@@ -141,24 +290,10 @@
         element: '#test_p',
         substring: $('#string_check_4').val(),
         callback: function () {
-            alert('Всё получилось!');
+            alert('Eventdog: всё получилось!');
         }
     });
 
-    $('#form_test').on('submit', function (e) {
-        var $this = $(this);
-        e.preventDefault();
-        $.post($this.attr('action'), $this.serialize())
-                .done(function (data) {
-                    data = JSON.stringify($.parseJSON(data));
-                    $('#test_ajax').text(data);
-                });
-    });
-
-    $('#form_test_2').on('submit', function (e) {
-        e.preventDefault();
-        $('#test_p').html($('#test_p').html() + $('#string_check_3').val());
-    })
 </script>
 
 </html>
