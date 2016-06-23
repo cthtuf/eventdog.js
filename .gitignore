@@ -1,0 +1,8 @@
+*.zip
+*.log
+*.pdf
+*.xls
+desktop.ini
+/.idea
+/bower_components
+/node_modules
